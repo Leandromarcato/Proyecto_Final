@@ -27,6 +27,7 @@ function App() {
 
       if (response.ok) {
         console.log('Archivo cargado y procesado correctamente');
+        alert('Archivo cargado y procesado correctamente')
       } else {
         console.error('Error al cargar el archivo');
       }
