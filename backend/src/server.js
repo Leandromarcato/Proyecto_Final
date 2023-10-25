@@ -14,13 +14,11 @@ app.post('/upload', upload.single('file'), (req, res) => {
     const uploadedFile = req.file;
     const fileContent = fs.readFileSync(uploadedFile.path, 'utf-8');
     const jsonData = processTxtToJson(fileContent);
-    console.log(jsonData)
- 
-    // Puedes har lo que necesites con el JSON aquí
+    console.log(jsonData);
 
-    fs.unlinkSync(uploadedFile.path); // Elimina el archivo temporal
+    fs.unlinkSync(uploadedFile.path);
 
-    res.status(200).json({ message: 'Archivo cargado y procesado correctamente' });
+    res.status(200).json({ message: 'Archivo cargado y procesado correctamente', data: jsonData });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error al procesar el archivo' });
@@ -30,7 +28,6 @@ app.post('/upload', upload.single('file'), (req, res) => {
 function processTxtToJson(txtContent) {
   const rows = txtContent.trim().split('\n');
 
-  // Encuentra números en cada fila
   const relevantData = rows.map(row => {
     const values = row.trim().split(/\s+/);
     return values.map(value => parseFloat(value)).filter(value => !isNaN(value));
@@ -38,22 +35,18 @@ function processTxtToJson(txtContent) {
 
   const jsonData = relevantData.map(entry => {
     return {
-      Temperature: entry[2],
-      Pressure: entry[1],
-      Depth: entry[3],
       Time: entry[0],
-      Date: 'TuFecha' // Agrega aquí tu fuente para la fecha
+      Pressure: entry[1],
+      Temperature: entry[2],
+      Depth: entry[3],
+      Dp_Dz: entry[4],
+      Dt_Dz: entry[5],
+      Description: entry[6]
     };
   });
 
-  console.log('JSON generado:', jsonData);
   return jsonData;
 }
-
-
-
-
-
 
 app.listen(port, () => {
   console.log(`Servidor backend en ejecución en http://localhost:${port}`);
